@@ -33,8 +33,9 @@ Artists: I've listened to 2,975 unique artists. It appears I have a tendency to 
 Tracks: I've listened to 12,323 unique songs. Similar to the artist year over year analysis we can see I also have a tendency to obssess over a set of songs then cycle through them as my top tens year over year have signifcant variation.
 
 Features: Track features remain relatively consistent over the years as the distribution charts hold the same shapes across years. Most songs I listen to are mid-energy, non-instrumental, and relatively loud.
-![Tempo](./images/tempo.JPG) ![Energy](./images/Energy.JPG) 
-![Instrumental](./images/instrumentalness.JPG) ![Loudness](./images/loudness.JPG)
+Tempo             |  Energy
+:----------------:|:----------------------:
+![Tempo](./images/tempo.JPG)  |  ![Energy](./images/Energy.JPG)
 
 
 ### Modeling
