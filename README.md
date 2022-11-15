@@ -19,9 +19,10 @@ Approach
 ---
 
 ### Data Collection & Cleaning
-Extended Spotify Listening History- (Include Link to Spotify Data Request)
-Kaggle Song List- (Include Link to Kaggle)
-Spotify API - Include Link to API Reference
+- [Extended Spotify Listening History](https://www.reddit.com/r/spotify/comments/p8fodi/is_there_any_way_to_receive_your_full_spotify/)
+- [Kaggle Song List](https://www.kaggle.com/datasets/mrmorj/dataset-of-songs-in-spotify)
+- [Spotify API](https://developer.spotify.com/documentation/web-api/reference/#/operations/search)
+
 
 In total I pulled 183k tracks from Spotify API to build a library of track and artist features to compare to a users listening history. My extended listening history from Spotify included 12k songs from 3k artists from January 2012- November 2022.
 
