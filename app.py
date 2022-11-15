@@ -5,6 +5,7 @@ import numpy as np
 import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn import preprocessing
 import spotipy
 import config
 
@@ -16,27 +17,6 @@ st.write('Enter a song to receive recommendations')
 user_track = st.text_input('Please Enter the Track Name: ')
 user_artist = st.text_input('Please Enter the Artist Name: ')
 
-
-
-#Spotify Call
-# with open('models/get_users_track.pkl', 'rb') as pickle_in:
-# 	call_spotify = pickle.load(pickle_in)
-
-# user_song = call_spotify(user_artist, user_track)
-
-#Recommendation Function
-# with open('models/get_recommendation.pkl', 'rb') as rec:
-# 	recommender = pickle.load(rec)
-
-# #Run the artist and track through the recommendation engine 
-# recommendations = recommender(user_song)
-
-#Return results
-
-
-#Load Pickled Library w/o Genre
-with open('models/library.pkl', 'rb') as df:
-	library = pickle.load(df)
 
 #Load Pickled Library w/Genre
 with open('models/library2.pkl', 'rb') as df2:
@@ -61,7 +41,7 @@ def get_users_track(artist, track):
     user_artists = artist_features([artist_id])
     user_track = track_features([track_id])
     user_table = pd.concat([user_artists, user_track], axis = 1)
-    user_table.drop(columns = ['trackID','artist_id', 'duration_ms', 'time_signature'], inplace = True)
+    user_table.drop(columns = ['trackID', 'duration_ms', 'time_signature'], inplace = True)
     user_table.index = [trackName]
 
     return user_table
@@ -153,27 +133,20 @@ def artist_features(artist):
     return art_feat
 
 
-#Calculates Cosine Simularity and Returns Top 5 Recommendations - Genre Not Considered
-# def get_recommendations(library, user_input):
-#     #calculate similarity
-#     similarity = cosine_similarity(library, user_input)
-    
-#     #create a similarity DataFrame
-#     sim = pd.DataFrame(similarity, index = library.index, columns = [user_input.index[0]])
-    
-#     #filter to top 5 
-#     recs = sim.sort_values(by = user_input.index[0], ascending = False)[1:6]
-    
-#     return recs
-
-
-def get_recommendations(library2, user_input):
+def recommender2(library, user_input):    
     #Join Library and User_Input
     user_input['genre'] = str(user_input['genre'][0])
-    user_input['Song'] = user_input.index
-    df = pd.concat([library2, user_input])
-    df.drop(columns = ['index'], inplace = True)
+    user_input['song'] = user_input.index
+    combined = pd.concat([library, user_input])
+    df = combined.drop(columns = ['artist_id'])
     df.reset_index(inplace = True, drop = True)
+    
+    #normalize features
+    df['popularity'] = pd.DataFrame(preprocessing.normalize([df['popularity']]).T)
+    df['loudness'] = pd.DataFrame(preprocessing.normalize([df['loudness']]).T)
+    df['followers'] = pd.DataFrame(preprocessing.normalize([df['followers']]).T)
+    df['tempo'] = pd.DataFrame(preprocessing.normalize([df['tempo']]).T)
+    df['key'] = pd.DataFrame(preprocessing.normalize([df['key']]).T)
     
     #Count Vectorize library and input    
     vectorizer = CountVectorizer(max_features = 200)
@@ -184,9 +157,9 @@ def get_recommendations(library2, user_input):
 
     #Add genre count to extended df
     combined_genre = pd.concat([df, genre_df], axis = 1)
-    combined_genre.index = combined_genre['Song']
+    combined_genre.index = combined_genre['song']
     #combined_genre.reset_index(inplace = True, drop = True)
-    combined_genre.drop(columns = ['genre', 'Song'], inplace = True)
+    combined_genre.drop(columns = ['genre', 'song'], inplace = True)
     
     #calculate similarity
     similarity = cosine_similarity(combined_genre, combined_genre.iloc[[-1]])
@@ -194,16 +167,18 @@ def get_recommendations(library2, user_input):
     #create a similarity DataFrame
     sim = pd.DataFrame(similarity, index = combined_genre.index, columns = [user_input.index[0]])
     
+    #filter out songs where the artist is the same as the input artist
+    combined['score'] = sim.iloc[:,0].reset_index(drop= True)
+    combined = combined[combined['artist_id'] != combined['artist_id'].iloc[-1]]
+    
     #filter to top 5 
-    recs = sim.sort_values(by = user_input.index[0], ascending = False)[1:6]
+    recs = combined.sort_values(by = 'score', ascending = False)[1:6]
     recs.reset_index(inplace = True)
     
-    return recs[['Song']]
+    return recs[['song']]
+
 
 
 user_input = get_users_track(user_artist, user_track)
 
-
-#st.write(user_input)
-st.write(get_recommendations(library2, user_input))
-#st.write
+st.write(recommender2(library2, user_input))
