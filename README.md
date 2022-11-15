@@ -45,7 +45,7 @@ Recommender 2
 The second recommender exceeded my expectations. It performed exceptionally well for common and some uncommon genres. While many further improvements can be made (see conclusion below), this model is ready to ship.
 
 ### Conclusion
-n conclusion I was able to successfully build a model and streamlit app that takes in a user input artist and track compares that to the combined track library and serves five recommendations from artists unique from the input artist. While Model 1 struggles with certain genres and styles of music, Model 2 which considers genre appears to perform reasonably well. Given additional time I would like to make the following improvements to the serve better recommendations.
+In conclusion I was able to successfully build a model and streamlit app that takes in a user input artist and track compares that to the combined track library and serves five recommendations from artists unique from the input artist. While Model 1 struggles with certain genres and styles of music, Model 2 which considers genre appears to perform reasonably well. Given additional time I would like to make the following improvements to the serve better recommendations.
 
 Next Steps:
 <br>1.Experiment with KNN Models
